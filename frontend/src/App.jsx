@@ -1,33 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { ParticipantPage } from './ParticipantPage'
+import logo from './assets/logo.png'
+import axios from 'axios'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const user = localStorage.getItem('user');
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const username = event.target.user.value;
+    const password = event.target.password.value;
+
+    if (username && password) {
+      const res = await axios.post('http://localhost:4000/login', { username, password })
+      console.log(res);
+      if (res.status === 200) {
+        localStorage.setItem('user', JSON.stringify({id: res.data.id, username, fullname: res.data.fullname, role: res.data.role }));
+        window.location.reload();
+      }
+    }
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {
+        user
+          ? <ParticipantPage />
+          : <div id="login">
+            <form className='flex flex-col gap-2 w-[300px] mx-auto' onSubmit={handleSubmit}>
+              <h2 className='text-center text-xl'>Login</h2>
+              <input type='text' name='user' placeholder='Enter username' />
+              <input type='password' name='password' placeholder='Enter password' />
+              <button type='submit'>Login</button>
+            </form>
+          </div>
+        }
     </>
   )
 }
