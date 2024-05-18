@@ -15,7 +15,7 @@ export function Slide({ question }) {
                 return
             }
             setCurrentImage((currentImage + 1) % images.length)
-        }, 90000 / images.length)
+        }, currentImage === 0 ? 3000 : 90000 / (images.length - 1))
 
         return () => clearInterval(interval)
     }, [images, currentImage])
