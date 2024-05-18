@@ -68,10 +68,6 @@ export default function ControllerPage() {
         socket.emit('show_answer', data[question - 1].answer);
     }
 
-    const showScore = (e) => {
-        socket.emit('show_score');
-    }
-
     return (
         <div>
             <h1 className="text-center font-bold mb-4 text-3xl">Controller Page</h1>
@@ -101,7 +97,6 @@ export default function ControllerPage() {
                 <button onClick={showAnswer}>
                     Show answer
                 </button>
-                <button onClick={showScore}>Show score</button>
             </div>
         </div>
     )

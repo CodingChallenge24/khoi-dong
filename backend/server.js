@@ -48,6 +48,11 @@ io.on('connect', (socket) => {
     socket.broadcast.emit('show_answer', data);
   });
 
+  socket.on('score', (data) => {
+    console.log(data);
+    socket.broadcast.emit('score', data);
+  });
+
   socket.on('disconnect', () => {
     console.log(`${username} is disconnected.`);
   });

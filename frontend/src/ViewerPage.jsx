@@ -19,6 +19,19 @@ export default function ViewerPage() {
             setTime(90)
         })
 
+        socket.on('show_answer', (data) => {
+            console.log(data)
+            setAnswer(data)
+        })
+
+        return () => {
+            socket.off('start')
+            socket.off('show_answer')
+            socket.disconnect()
+        }
+    }, [])
+
+    useEffect(() => {
         socket.on('answer', (data) => {
             console.log(data)
             participants.forEach((participant, index) => {
@@ -30,18 +43,19 @@ export default function ViewerPage() {
             setParticipants([...participants])
         })
 
-        socket.on('show_answer', (data) => {
+        socket.on('score', (data) => {
             console.log(data)
-            setAnswer(data)
+            participants.forEach((participant) => {
+                participant.score = data.scores[participant.id]
+            })
+            setParticipants([...participants])
         })
 
         return () => {
-            socket.off('start')
             socket.off('answer')
-            socket.off('show_answer')
-            socket.disconnect()
+            socket.off('score')
         }
-    }, [])
+    }, [participants])
 
     return (
         <>
@@ -49,7 +63,7 @@ export default function ViewerPage() {
                 <div></div>
                 <h2 className='text-2xl font-bold text-center col-span-3 justify-self-center'>Câu hỏi thứ {question}:</h2>
                 <div className='justify-self-end'>
-                    <Timer time={time} setTime={setTime} />
+                    {time > 0 && <Timer time={time} setTime={setTime} />}
                 </div>
             </div>
             <Slide question={question} />
@@ -59,10 +73,13 @@ export default function ViewerPage() {
             <div className='grid grid-cols-2'>
                 {
                     participants.map((participant, index) => (
-                        <div key={index} className='border p-2'>
-                            <p className='font-bold'>{participant.name}</p>
-                            <p>Trả lời: {participant.answer}</p>
-                            <p>Thời gian: {participant.time}</p>
+                        <div className='flex justify-between items-center border p-2'>
+                            <div key={index}>
+                                <p className='font-bold'>{participant.name}</p>
+                                <p>Trả lời: {participant.answer}</p>
+                                <p>Thời gian: {participant.time}</p>
+                            </div>
+                            <p className='text-[#8CC63F] font-bold text-2xl'>{participant.score}</p>
                         </div>
                     ))
                 }

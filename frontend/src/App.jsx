@@ -12,7 +12,7 @@ function App() {
     const password = event.target.password.value;
 
     if (username && password) {
-      const res = await axios.post('http://localhost:4000/login', { username, password })
+      const res = await axios.post('http://192.168.0.100:4000/login', { username, password })
       console.log(res);
       if (res.status === 200) {
         localStorage.setItem('user', JSON.stringify({id: res.data.id, username, fullname: res.data.fullname, role: res.data.role }));
